@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>惊喜小游戏</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f0f0f0;
+        }
+        .popup {
+            position: fixed;
+            padding: 20px;
+            background: white;
+            border: 3px solid #ff6b6b;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.2);
+            z-index: 1000;
+            text-align: center;
+        }
+        .popup button {
+            margin-top: 15px;
+            padding: 8px 15px;
+            background: #4ecdc4;
+            border: none;
+            border-radius: 5px;
+            color: white;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        .popup button:hover {
+            background: #3dbbaf;
+        }
+        #startBtn {
+            padding: 15px 30px;
+            font-size: 20px;
+            background: #ffd166;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        #startBtn:hover {
+            background: #ffc400;
+            transform: scale(1.05);
+        }
+    </style>
+</head>
+<body>
+    <h1>来玩个小游戏吧～</h1>
+    <button id="startBtn">点击开始</button>
+
+    <script>
+        // 整蛊文案列表
+        const messages = [
+            "哈哈，被我抓到了！",
+            "想关掉我？没那么容易～",
+            "你点得越快，我弹得越多哦😜",
+            "这是对你的小小惩罚～",
+            "放弃吧，你关不完的！",
+            "惊不惊喜？意不意外？",
+            "知道错了吗？(其实我也不知道错啥了)",
+            "再点一下试试～",
+            "恭喜你，触发了隐藏彩蛋！（才怪）",
+            "别生气嘛，就玩一会儿～"
+        ];
+
+        // 记录弹窗数量
+        let popupCount = 0;
+        // 最大弹窗数量（防止过度整蛊）
+        const maxPopups = 20;
+
+        // 创建弹窗函数
+        function createPopup() {
+            if (popupCount >= maxPopups) return;
+            
+            // 创建弹窗元素
+            const popup = document.createElement('div');
+            popup.className = 'popup';
+            
+            // 随机大小
+            const width = Math.floor(Math.random() * 200) + 150;
+            const height = Math.floor(Math.random() * 150) + 100;
+            popup.style.width = `${width}px`;
+            popup.style.height = `${height}px`;
+            
+            // 随机位置（不超出屏幕）
+            const maxX = window.innerWidth - width;
+            const maxY = window.innerHeight - height;
+            const x = Math.floor(Math.random() * maxX);
+            const y = Math.floor(Math.random() * maxY);
+            popup.style.left = `${x}px`;
+            popup.style.top = `${y}px`;
+            
+            // 随机文案
+            const message = messages[Math.floor(Math.random() * messages.length)];
+            popup.innerHTML = `
+                <p>${message}</p>
+                <button onclick="closePopup(this.parentElement)">关闭</button>
+            `;
+            
+            // 添加到页面
+            document.body.appendChild(popup);
+            popupCount++;
+            
+            // 随机抖动效果
+            if (Math.random() > 0.5) {
+                popup.style.animation = 'shake 0.5s infinite';
+            }
+        }
+
+        // 关闭弹窗函数（有概率再弹一个）
+        function closePopup(popup) {
+            document.body.removeChild(popup);
+            popupCount--;
+            
+            // 60%概率再弹一个新的
+            if (Math.random() < 0.6 && popupCount < maxPopups) {
+                setTimeout(createPopup, 300);
+            }
+        }
+
+        // 开始按钮点击事件
+        document.getElementById('startBtn').addEventListener('click', () => {
+            // 隐藏开始按钮
+            document.getElementById('startBtn').style.display = 'none';
+            document.querySelector('h1').textContent = '游戏开始啦！';
+            
+            // 初始弹出3-5个弹窗
+            const initialCount = Math.floor(Math.random() * 3) + 3;
+            for (let i = 0; i < initialCount; i++) {
+                setTimeout(createPopup, i * 500);
+            }
+            
+            // 定时随机增加弹窗（持续10秒）
+            const interval = setInterval(() => {
+                if (popupCount < maxPopups && Math.random() < 0.7) {
+                    createPopup();
+                }
+            }, 2000);
+            
+            // 10秒后停止自动增加
+            setTimeout(() => {
+                clearInterval(interval);
+                if (popupCount === 0) {
+                    alert('你赢了！居然这么快就关掉了～');
+                }
+            }, 10000);
+        });
+
+        // 添加抖动动画
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes shake {
+                0% { transform: translate(1px, 1px) rotate(0deg); }
+                10% { transform: translate(-1px, -2px) rotate(-1deg); }
+                20% { transform: translate(-3px, 0px) rotate(1deg); }
+                30% { transform: translate(3px, 2px) rotate(0deg); }
+                40% { transform: translate(1px, -1px) rotate(1deg); }
+                50% { transform: translate(-1px, 2px) rotate(-1deg); }
+                60% { transform: translate(-3px, 1px) rotate(0deg); }
+                70% { transform: translate(3px, 1px) rotate(-1deg); }
+                80% { transform: translate(-1px, -1px) rotate(1deg); }
+                90% { transform: translate(1px, 2px) rotate(0deg); }
+                100% { transform: translate(1px, -2px) rotate(-1deg); }
+            }
+        `;
+        document.head.appendChild(style);
+    </script>
+</body>
+</html>
