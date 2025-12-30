@@ -1,0 +1,708 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>刘嘉的2026 · 专属祝福</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            color: white;
+            font-family: 'PingFang SC', 'Microsoft YaHei', Arial, sans-serif;
+            overflow: hidden;
+            height: 100vh;
+            width: 100vw;
+            user-select: none;
+            -webkit-user-select: none;
+            transition: background 1.5s ease-in-out;
+        }
+
+        body.dark {
+            background: #000000;
+            background: radial-gradient(circle at center, #1a1a2e 0%, #000000 100%);
+        }
+
+        /* 初始层 - 时间胶囊 */
+        .intro-layer {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 100;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: opacity 1.2s ease, transform 1.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        .intro-layer.fade-out {
+            opacity: 0;
+            transform: scale(1.2);
+            pointer-events: none;
+        }
+
+        .time-capsule-container {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 30px;
+        }
+
+        /* 发光环优化 */
+        .glow-ring {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+            border: 2px solid rgba(176, 128, 232, 0.5);
+            box-shadow: 0 0 30px rgba(176, 128, 232, 0.4), inset 0 0 20px rgba(85, 144, 232, 0.3);
+            animation: ripple 2.5s ease-out infinite;
+        }
+
+        .glow-ring:nth-child(2) {
+            animation-delay: 0.8s;
+            width: 220px;
+            height: 220px;
+        }
+
+        @keyframes ripple {
+            0% { 
+                width: 200px; height: 200px; 
+                opacity: 0.9; 
+                border-width: 2px; 
+            }
+            100% { 
+                width: 380px; height: 380px; 
+                opacity: 0; 
+                border-width: 0; 
+            }
+        }
+
+        /* 时间胶囊按钮优化 */
+        .time-capsule {
+            width: 180px;
+            height: 180px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #b080e8 0%, #5590e8 100%);
+            background-size: 200% 200%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            box-shadow: 0 0 50px rgba(85, 144, 232, 0.8), inset 0 0 20px rgba(255, 255, 255, 0.2);
+            transition: all 0.3s ease;
+            z-index: 2;
+            border: none;
+            outline: none;
+            animation: capsuleBreath 3s ease-in-out infinite;
+        }
+
+        @keyframes capsuleBreath {
+            0%, 100% { transform: scale(1); box-shadow: 0 0 40px rgba(85, 144, 232, 0.7); }
+            50% { transform: scale(1.05); box-shadow: 0 0 60px rgba(85, 144, 232, 0.9); }
+        }
+
+        .time-capsule:active {
+            transform: scale(0.95);
+            box-shadow: 0 0 30px rgba(85, 144, 232, 0.6);
+        }
+
+        .capsule-text {
+            color: #fff;
+            font-size: 28px;
+            font-weight: 700;
+            text-align: center;
+            line-height: 1.2;
+            letter-spacing: 3px;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        /* 提示文字优化 */
+        .pulse-text {
+            color: rgba(80, 80, 120, 0.7);
+            font-size: 15px;
+            letter-spacing: 5px;
+            animation: textPulse 2s ease-in-out infinite;
+        }
+
+        @keyframes textPulse {
+            0%, 100% { opacity: 0.5; transform: translateY(0); }
+            50% { opacity: 1; transform: translateY(-3px); }
+        }
+
+        /* 宇宙层优化 */
+        .universe-layer {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 2s ease-in-out;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .universe-layer.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        /* 核心文案优化 */
+        .core-text {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0.7);
+            color: #ff7e95;
+            font-size: 28px;
+            font-weight: 800;
+            text-shadow: 0 0 25px rgba(255, 126, 149, 0.6), 0 2px 5px rgba(0, 0, 0, 0.3);
+            z-index: 50;
+            white-space: nowrap;
+            opacity: 0;
+            letter-spacing: 2px;
+            will-change: transform, opacity;
+            transition: 
+                opacity 1.5s ease-out, 
+                transform 1.5s cubic-bezier(0.22, 1, 0.36, 1);
+        }
+
+        /* 响应式文案大小 */
+        @media (min-width: 375px) { .core-text { font-size: 32px; } }
+        @media (min-width: 768px) { .core-text { font-size: 48px; } }
+        @media (min-width: 1024px) { .core-text { font-size: 60px; } }
+
+        /* 星空画布 */
+        #galaxyCanvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            background: transparent;
+        }
+
+        /* 烟花提示优化 */
+        .firework-tip {
+            position: fixed;
+            bottom: 40px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 16px;
+            text-shadow: 0 0 15px rgba(255, 255, 255, 0.4);
+            opacity: 0;
+            transition: opacity 1s ease;
+            z-index: 50;
+            pointer-events: none;
+            animation: tipPulse 2.5s ease-in-out infinite;
+            background: rgba(0, 0, 0, 0.2);
+            padding: 8px 20px;
+            border-radius: 30px;
+            backdrop-filter: blur(5px);
+        }
+
+        .firework-tip.show {
+            opacity: 1;
+        }
+
+        @keyframes tipPulse {
+            0%, 100% { opacity: 0.7; }
+            50% { opacity: 1; }
+        }
+
+        /* 漂浮祝福语优化 */
+        .blessing-text {
+            position: absolute;
+            color: rgba(255, 255, 255, 0.95);
+            font-size: 17px;
+            font-weight: 500;
+            text-shadow: 0 0 12px rgba(255, 255, 255, 0.6), 0 1px 3px rgba(0, 0, 0, 0.2);
+            pointer-events: none;
+            z-index: 10;
+            animation: float 7s ease-in-out infinite;
+            opacity: 0;
+            transition: opacity 0.8s ease;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            25% { transform: translateY(-18px) rotate(1deg); }
+            75% { transform: translateY(-10px) rotate(-1deg); }
+        }
+
+        /* 烟花粒子优化 */
+        .firework-particle {
+            position: absolute;
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 5;
+            opacity: 1;
+            transition: all 0.9s cubic-bezier(0.17, 0.67, 0.83, 0.67);
+        }
+
+        /* 音频控制按钮（新增） */
+        .audio-control {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(8px);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            z-index: 100;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: all 0.3s ease;
+        }
+
+        .audio-control:hover {
+            background: rgba(0, 0, 0, 0.5);
+            transform: scale(1.1);
+        }
+
+        .audio-icon {
+            width: 18px;
+            height: 18px;
+            background: url("data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHZpZXdCb3g9IjAgMCAxOCAxOCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMy41IDJ2MTRjMi41LS41IDQuNS0yIDUuNS00LjUgMS0yLjUgMS41LTUuNSAxLjUtOSAwLTQgLjUtNyAxLjUtOS41LTEtMi41LTMtNC01LjUtNC41ek0xMCA2YzAtLjQ1LS4wNS0uODktLjE0LTEuMzMgMS43IDEgMi41IDIuNSAyLjUgNC4zIDAgMS44LS44IDMuMy0yLjUgNC4zLS4wOS40NC0uMTQuODgtLjE0IDEuMzMgMS43IDEgMi41IDIuNSAyLjUgNC4zIDAgMS44LS44IDMzLTIuNSA0LjMgMCAxLjE1LS4zOCAyLjIyLTEuMDQgMi45NWwtMy44MyAyLjE2Yy0uMzQtLjU1LS41NC0xLjE5LS41NC0xLjg4IDAtMi43MSAxLjA5LTUuMDcgMy4yNy02LjA3ek03IDguNWwyLjUyIDEuNDQuMjQtLjQ0Yy0xLjk0LS45NS0zLjI2LTMuMDctMy4yNi01LjQ0IDAtLjg0LjE0LTEuNjUuNDEtMi40bC0yLjU1IDEuMzdjLS4yNS0uMTctLjQ2LS4zNy0uNjMtLjYgMCAxLjc4IDEuMDkgMy4zOCAzLjI3IDQuMDZ6IiBmaWxsPSIjZmZmIiBmaWxsLW9wYWNpdHk9IjEiLz48L3N2Zz4=") center/contain no-repeat;
+        }
+
+        .audio-icon.muted {
+            background: url("data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHZpZXdCb3g9IjAgMCAxOCAxOCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMy41IDJ2MTRjMi41LS41IDQuNS0yIDUuNS00LjUgMS0yLjUgMS41LTUuNSAxLjUtOSAwLTQgLjUtNyAxLjUtOS41LTEtMi41LTMtNC01LjUtNC41ek0xMCA2YzAtLjQ1LS4wNS0uODktLjE0LTEuMzMgMS43IDEgMi41IDIuNSAyLjUgNC4zIDAgMS44LS44IDMuMy0yLjUgNC4zLS4wOS40NC0uMTQuODgtLjE0IDEuMzMgMS43IDEgMi41IDIuNSAyLjUgNC4zIDAgMS44LS44IDMzLTIuNSA0LjMgMCAxLjE1LS4zOCAyLjIyLTEuMDQgMi45NWwtMy44MyAyLjE2Yy0uMzQtLjU1LS41NC0xLjE5LS41NC0xLjg4IDAtMi43MSAxLjA5LTUuMDcgMy4yNy02LjA3ek03IDguNWwyLjUyIDEuNDQuMjQtLjQ0Yy0xLjk0LS45NS0zLjI2LTMuMDctMy4yNi01LjQ0IDAtLjg0LjE0LTEuNjUuNDEtMi40bC0yLjU1IDEuMzdjLS4yNS0uMTctLjQ2LS4zNy0uNjMtLjYgMCAxLjc4IDEuMDkgMy4zOCAzLjI3IDQuMDZ6IiBmaWxsPSIjZmZmIiBmaWxsLW9wYWNpdHk9IjEiLz48cGF0aCBkPSJNMTUgMi41bC0xIDEuNWwtMS0xLjVjLjY0LS40MyAxLjIyLS45NyAxLjc0LTEuNjJsMS40IDEuNGwxLjQtMS40Yy0uNTItLjY1LTEuMS0xLjE5LTEuNzQtMS42MnptLjk0IDkuMTljLS42NC0uNDMtMS4yMi0uOTctMS43NC0xLjYybC0xLjQgMS40bC0xLjQtLTEuNGMuNTItLjY1IDEuMS0xLjE5IDEuNzQtMS42MmwxLTEuNWwxIDEuNWMtLjY0LjQzLTEuMjIuOTctMS43NCAxLjYyeiIgZmlsbD0iI2ZmZiIgZmlsbC1vcGFjaXR5PSIxIi8+PC9zdmc+") center/contain no-repeat;
+        }
+
+        audio { display: none; }
+    </style>
+</head>
+<body>
+<!-- 动态星空背景 -->
+<canvas id="galaxyCanvas"></canvas>
+
+<!-- 音频控制按钮 -->
+<div class="audio-control" id="audioControl">
+    <div class="audio-icon" id="audioIcon"></div>
+</div>
+
+<!-- 初始层：时间胶囊 -->
+<div class="intro-layer" id="introLayer">
+    <div class="time-capsule-container">
+        <div class="glow-ring"></div>
+        <div class="glow-ring"></div>
+        <button class="time-capsule" id="openBtn">
+            <span class="capsule-text">开启<br>2026</span>
+        </button>
+        <div class="pulse-text">点击开启专属祝福</div>
+    </div>
+</div>
+
+<!-- 宇宙层：主视觉 -->
+<div class="universe-layer" id="mainLayer">
+    <div class="core-text" id="coreText">希望2026的刘嘉✨...</div>
+    <div class="firework-tip" id="fireworkTip">点击屏幕放烟花 🎆</div>
+</div>
+
+<!-- 背景音乐 -->
+<audio id="bgMusic" src="https://lf9-music-east.douyinstatic.com/obj/ies-music-hj/7530321904100576060.mp3" loop preload="auto"></audio>
+
+<!-- 祝福语库（新增更多刘嘉专属） -->
+<div id="content" style="display:none">生财有道
+富贵有余
+八方来财
+无扰无忧
+突破局限
+一帆风顺
+笑常伴
+情安稳
+顺遂无忧
+相处无压
+人际舒展
+没有烦恼
+情自治
+安稳度日
+保持热爱
+明辨是非
+温柔坚定
+财运旺
+从容不迫
+沉稳清醒
+远见敏锐
+松弛
+有盼头
+富相随
+事顺遂
+精进
+通透
+坚强
+勇敢
+幸福
+自信
+自洽
+常欢喜
+少遗憾
+身自在
+踏实
+做自己
+幸运
+平和
+乐无忧
+睡眠安稳
+有分寸
+突破
+自律
+坦率
+独立
+理性
+明媚
+健康
+快乐
+有序
+自足
+蜕变
+坚韧
+乐观
+开阔
+从容
+自愈力强
+情绪稳定
+作息规律
+生活有序
+心无杂念
+清醒自知
+内心丰盈
+内核稳定
+财气盛
+利相随
+有底气
+不惧风霜
+岁岁安康
+未来可期
+福常伴
+平安
+喜乐
+顺遂
+安康
+如意
+吉祥
+福气
+好运
+暴富
+开心
+自在
+无忧
+美满
+团圆
+进取
+得胜
+欢喜
+长久
+无畏
+清醒
+无恙
+安宁
+顺心
+无虞
+长乐
+无欺
+坦荡
+真诚
+热烈
+自由
+刘嘉万事顺意
+刘嘉平安喜乐
+刘嘉前程似锦
+刘嘉财运亨通
+刘嘉健康无忧
+刘嘉心想事成
+刘嘉步步高升
+刘嘉笑口常开
+刘嘉福气满满
+刘嘉好运连连
+刘嘉美梦成真
+刘嘉星光璀璨
+刘嘉温暖常伴
+刘嘉一路繁花
+刘嘉万事胜意
+刘嘉阖家幸福
+刘嘉事业长虹
+刘嘉如虎添翼
+刘嘉乘风破浪
+刘嘉熠熠生辉
+刘嘉温暖如初
+刘嘉岁岁年年皆胜意
+刘嘉朝朝暮暮有欢喜</div>
+
+<script>
+    // 核心配置
+    const dataInfo = {
+        title: "刘嘉的2026 · 专属祝福",
+        ftitle: "希望2026的刘嘉✨...",
+        music_url: "https://lf9-music-east.douyinstatic.com/obj/ies-music-hj/7530321904100576060.mp3",
+        is_mobile: /Android|webOS|iPhone|iPod|BlackBerry/i.test(navigator.userAgent)
+    };
+
+    // DOM元素
+    const el = {
+        openBtn: document.getElementById('openBtn'),
+        introLayer: document.getElementById('introLayer'),
+        mainLayer: document.getElementById('mainLayer'),
+        coreText: document.getElementById('coreText'),
+        galaxyCanvas: document.getElementById('galaxyCanvas'),
+        bgMusic: document.getElementById('bgMusic'),
+        fireworkTip: document.getElementById('fireworkTip'),
+        audioControl: document.getElementById('audioControl'),
+        audioIcon: document.getElementById('audioIcon'),
+        body: document.body,
+        ctx: null
+    };
+
+    // 全局状态
+    const state = {
+        isMusicPlaying: false,
+        isMusicMuted: false,
+        blessings: [],
+        starCount: 2500, // 星星数量提升
+        stars: []
+    };
+
+    // 初始化
+    window.addEventListener('load', init);
+
+    function init() {
+        // 初始化Canvas
+        el.ctx = el.galaxyCanvas.getContext('2d');
+        resizeCanvas();
+        window.addEventListener('resize', resizeCanvas);
+
+        // 加载祝福语
+        loadBlessings();
+
+        // 初始化星空
+        createStars();
+        animateStars();
+
+        // 绑定事件
+        bindEvents();
+
+        // 统计访问（非核心，不影响体验）
+        fetch(`https://ai8.top/api/readOnce?id=4818847&temp_id=72&data_type=2`).catch(() => {});
+    }
+
+    // 调整Canvas尺寸
+    function resizeCanvas() {
+        el.galaxyCanvas.width = window.innerWidth;
+        el.galaxyCanvas.height = window.innerHeight;
+    }
+
+    // 加载祝福语
+    function loadBlessings() {
+        const content = document.getElementById('content').innerText;
+        state.blessings = content.split('\n').filter(item => item.trim());
+    }
+
+    // 创建动态星空
+    function createStars() {
+        state.stars = [];
+        for (let i = 0; i < state.starCount; i++) {
+            state.stars.push({
+                x: Math.random() * el.galaxyCanvas.width,
+                y: Math.random() * el.galaxyCanvas.height,
+                radius: Math.random() * 1.8 + 0.2,
+                opacity: Math.random() * 0.9 + 0.1,
+                speed: Math.random() * 0.2 + 0.05,
+                direction: Math.random() * Math.PI * 2
+            });
+        }
+    }
+
+    // 动画星空
+    function animateStars() {
+        el.ctx.clearRect(0, 0, el.galaxyCanvas.width, el.galaxyCanvas.height);
+        
+        state.stars.forEach(star => {
+            // 星星缓慢移动
+            star.x += Math.cos(star.direction) * star.speed;
+            star.y += Math.sin(star.direction) * star.speed;
+            
+            // 边界回弹
+            if (star.x < 0) star.x = el.galaxyCanvas.width;
+            if (star.x > el.galaxyCanvas.width) star.x = 0;
+            if (star.y < 0) star.y = el.galaxyCanvas.height;
+            if (star.y > el.galaxyCanvas.height) star.y = 0;
+            
+            // 绘制星星
+            el.ctx.beginPath();
+            el.ctx.arc(star.x, star.y, star.radius, 0, Math.PI * 2);
+            el.ctx.fillStyle = `rgba(255, 255, 255, ${star.opacity})`;
+            el.ctx.fill();
+        });
+
+        requestAnimationFrame(animateStars);
+    }
+
+    // 绑定所有交互事件
+    function bindEvents() {
+        // 开启按钮点击
+        el.openBtn.addEventListener('click', openTimeCapsule);
+        
+        // 音频控制
+        el.audioControl.addEventListener('click', toggleAudio);
+        
+        // 点击屏幕放烟花
+        document.addEventListener('click', (e) => {
+            if (el.mainLayer.classList.contains('active')) {
+                createFirework(e.clientX, e.clientY);
+            }
+        });
+    }
+
+    // 开启时间胶囊（核心交互）
+    function openTimeCapsule() {
+        // 隐藏初始层
+        el.introLayer.classList.add('fade-out');
+        
+        // 显示主层
+        setTimeout(() => {
+            el.mainLayer.classList.add('active');
+            el.body.classList.add('dark');
+            
+            // 核心文案动画
+            el.coreText.style.opacity = '1';
+            el.coreText.style.transform = 'translate(-50%, -50%) scale(1)';
+            
+            // 显示烟花提示
+            el.fireworkTip.classList.add('show');
+            
+            // 尝试播放音乐
+            playMusic();
+            
+            // 开始生成漂浮祝福
+            setInterval(createFloatingBlessing, 1200);
+        }, 1000);
+    }
+
+    // 播放背景音乐
+    function playMusic() {
+        el.bgMusic.play().then(() => {
+            state.isMusicPlaying = true;
+            el.audioIcon.classList.remove('muted');
+        }).catch(() => {
+            // 需要用户交互时，点击音频按钮播放
+            el.audioControl.addEventListener('click', playMusic, { once: true });
+        });
+    }
+
+    // 切换音频播放/暂停
+    function toggleAudio() {
+        if (state.isMusicPlaying) {
+            el.bgMusic.pause();
+            state.isMusicPlaying = false;
+            el.audioIcon.classList.add('muted');
+        } else {
+            playMusic();
+        }
+    }
+
+    // 创建烟花特效（优化版）
+    function createFirework(x, y) {
+        const colors = [
+            '#ff6b8b', '#5590e8', '#b080e8', '#ffd700', 
+            '#32cd32', '#ff7f50', '#87ceeb', '#ff69b4'
+        ];
+        const color = colors[Math.floor(Math.random() * colors.length)];
+        const particleCount = dataInfo.is_mobile ? 80 : 120; // 移动端减少粒子数提升性能
+
+        for (let i = 0; i < particleCount; i++) {
+            const angle = Math.random() * Math.PI * 2;
+            const speed = Math.random() * 6 + 3;
+            const distance = Math.random() * 120 + 60;
+            const size = Math.random() * 4 + 1;
+
+            const endX = x + Math.cos(angle) * distance;
+            const endY = y + Math.sin(angle) * distance;
+
+            const particle = document.createElement('div');
+            particle.className = 'firework-particle';
+            particle.style.width = `${size}px`;
+            particle.style.height = `${size}px`;
+            particle.style.backgroundColor = color;
+            particle.style.left = `${x}px`;
+            particle.style.top = `${y}px`;
+
+            document.body.appendChild(particle);
+
+            // 触发动画
+            setTimeout(() => {
+                particle.style.left = `${endX}px`;
+                particle.style.top = `${endY}px`;
+                particle.style.opacity = '0';
+            }, 10);
+
+            // 移除粒子
+            setTimeout(() => {
+                particle.remove();
+            }, 900);
+        }
+    }
+
+    // 创建漂浮祝福语（优化版）
+    function createFloatingBlessing() {
+        if (!state.blessings.length) return;
+
+        // 随机选祝福语
+        const text = state.blessings[Math.floor(Math.random() * state.blessings.length)];
+        const blessing = document.createElement('div');
+        blessing.className = 'blessing-text';
+        blessing.innerText = text;
+
+        // 随机位置（避开边缘）
+        const x = Math.random() * (el.galaxyCanvas.width - 200) + 100;
+        const y = Math.random() * (el.galaxyCanvas.height - 150) + 75;
+
+        blessing.style.left = `${x}px`;
+        blessing.style.top = `${y}px`;
+
+        document.body.appendChild(blessing);
+
+        // 渐入
+        setTimeout(() => {
+            blessing.style.opacity = '1';
+        }, 100);
+
+        // 渐出并移除
+        setTimeout(() => {
+            blessing.style.opacity = '0';
+            setTimeout(() => blessing.remove(), 800);
+        }, 6500);
+    }
+
+    // 百度统计（可选）
+    (function() {
+        var hm = document.createElement("script");
+        hm.src = "https://hm.baidu.com/hm.js?c4419cfaccfe088ac7397ee955dd5e9e";
+        var s = document.getElementsByTagName("script")[0];
+        s.parentNode.insertBefore(hm, s);
+    })();
+</script>
+<script src="https://apps.bdimg.com/libs/jquery/2.1.1/jquery.min.js"></script>
+</body>
+</html>
